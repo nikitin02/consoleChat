@@ -5,10 +5,10 @@ import java.net.Socket;
 
 public class Client implements Runnable {
 
-    private Socket client;
+     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
-    private boolean done;
+     private boolean done;
 
     public static void main(String[] args) {
         Client client = new Client();

@@ -10,10 +10,11 @@ import java.util.concurrent.Executors;
 
 public class Server implements Runnable{
 
-    private ArrayList<ConnectionHandler> connections;
+    private static ArrayList<ConnectionHandler> connections;
     private ServerSocket server;
     private boolean done;
     private ExecutorService pool;
+
 
     public Server() {
         connections = new ArrayList<>();
@@ -42,7 +43,7 @@ public class Server implements Runnable{
 
     }
 
-    public void broadcast(String message) {
+    public static void broadcast(String message) {
         for (ConnectionHandler ch: connections) {
             if (ch != null) {
                 ch.sendMessage(message);
@@ -61,11 +62,10 @@ public class Server implements Runnable{
                 ch.shutdown();
             }
         } catch (Exception e) {
-
         }
     }
 
-    class ConnectionHandler implements Runnable {
+    static class ConnectionHandler implements Runnable {
 
         private Socket client;
         private BufferedReader in;
@@ -85,11 +85,18 @@ public class Server implements Runnable{
                 name = in.readLine();
                 System.out.println(name + " connected");
                 broadcast(name + " joined chat");
+                out.println("enter your message");
                 String message;
                 while ((message = in.readLine()) != null) {
-                    if (message.startsWith("/quit")) {
+                    if (message.startsWith("/quit"))
+                    {
                         broadcast(name + " left chat");
                         shutdown();
+                        for (ConnectionHandler connectionHandler : connections) {
+                            if (connectionHandler.client.isClosed()) {
+                                connections.remove(connectionHandler);
+                            }
+                        }
                     } else {
                         broadcast(name + ": " + message);
                     }
