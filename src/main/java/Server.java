@@ -92,11 +92,7 @@ public class Server implements Runnable{
                     {
                         broadcast(name + " left chat");
                         shutdown();
-                        for (ConnectionHandler connectionHandler : connections) {
-                            if (connectionHandler.client.isClosed()) {
-                                connections.remove(connectionHandler);
-                            }
-                        }
+                        connections.remove(this);
                     } else {
                         broadcast(name + ": " + message);
                     }
